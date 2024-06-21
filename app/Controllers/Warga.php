@@ -10,6 +10,8 @@ class Warga extends BaseController
 {
     protected $tmbhAduan;
     protected $informasi;
+    protected $jenisModel;
+    protected $statusModel;
 
     protected $userModel;
     protected $aduanModel;
@@ -20,6 +22,9 @@ class Warga extends BaseController
     {
         $this->userModel = new \App\Models\UserModel();
         $this->aduanModel = new \App\Models\AduanModel();
+
+        $this->jenisModel = new \App\Models\JenisModel();
+        $this->statusModel = new \App\Models\StatusModel();
 
         $route = Services::routes();
         $this->tmbhAduan = array_key_exists('admin/aduan/add', $route->getRoutes());
@@ -39,6 +44,9 @@ class Warga extends BaseController
 
             'tambah_aduan' => $this->tmbhAduan,
             'informasi' => $this->informasi,
+
+            'jenis' => $this->jenisModel->findAll(),
+            'status' => $this->statusModel->findAll(),
         ]);
     }
 
@@ -53,6 +61,9 @@ class Warga extends BaseController
 
             'tambah_aduan' => $this->tmbhAduan,
             'informasi' => $this->informasi,
+
+            'jenis' => $this->jenisModel->findAll(),
+            'status' => $this->statusModel->findAll(),
         ]);
     }
 
@@ -67,6 +78,9 @@ class Warga extends BaseController
 
             'tambah_aduan' => $this->tmbhAduan,
             'informasi' => $this->informasi,
+
+            'jenis' => $this->jenisModel->findAll(),    
+            'status' => $this->statusModel->findAll(),
         ]);
     }
 
@@ -85,11 +99,12 @@ class Warga extends BaseController
         $data = [
             'user_id' => user_id(),
             'nomor' => rand(10000000, 99999999),
-            'status' => 'belum diproses',
+            'status' => 1,
             'tanggal' => $this->request->getPost('tanggal_kejadian'),
             'jenis' => $this->request->getPost('jenis_aduan'),
             'judul' => $this->request->getPost('judul'),
             'lokasi' => $this->request->getPost('lokasi'),
+            'latlang' => $this->request->getPost('latlang'),
             'keterangan' => $this->request->getPost('keterangan'),
             'foto' => $bukti_file_name,
         ];
@@ -126,6 +141,8 @@ class Warga extends BaseController
 
             'tambah_aduan' => $this->tmbhAduan,
             'informasi' => $this->informasi,
+
+            'jenis' => $this->jenisModel->findAll(),
         ]);
     }
 
@@ -151,6 +168,7 @@ class Warga extends BaseController
             'jenis' => $this->request->getPost('jenis_aduan'),
             'judul' => $this->request->getPost('judul'),
             'lokasi' => $this->request->getPost('lokasi'),
+            'latlang' => $this->request->getPost('latlang'),
             'keterangan' => $this->request->getPost('keterangan'),
             'foto' => $bukti_file_name,
         ];
@@ -160,7 +178,10 @@ class Warga extends BaseController
         
         if ($this->aduanModel->update($id->id, $data)) {
             if ($foto->getError() == 0) {
-                unlink('foto_kejadian/' . $this->request->getPost('foto'));
+                // if file exist unlink
+                if (file_exists('foto_kejadian/' . $this->request->getPost('foto'))) {
+                    unlink('foto_kejadian/' . $this->request->getPost('foto'));
+                }
                 $foto->move('foto_kejadian', $bukti_file_name);
             }
 

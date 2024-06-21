@@ -81,10 +81,9 @@
                                     <label for="jenis_aduan">Jenis Aduan</label>
                                     <select class="select2" id="jenis_aduan" name="jenis_aduan">
                                         <option value="-">Pilih Jenis Aduan</option>
-                                        <option value="kehilangan">Kehilangan</option>
-                                        <option value="pencurian">Pencurian</option>
-                                        <option value="kejadian">Kejadian</option>
-                                        <option value="kecelakaan">Kecelakaan</option>
+                                        <?php foreach ($jenis as $j) : ?>
+                                            <option value="<?= $j->id_jenis ?>"><?= $j->jenis_aduan ?></option>
+                                        <?php endforeach; ?>
                                     </select>
                                 </div>
                             </div>
@@ -100,11 +99,18 @@
                             <input type="text" class="form-control" id="judul" placeholder="kejadian apa yang terjadi" name="judul">
                         </div>
                         <div class="form-group">
-                            <label for="keterangan">Keterangan</label>
-                            <textarea class="form-control" id="keterangan" name="keterangan" style="height: 100px;" placeholder="Jelaskan mengenai hal yang dilaporkan"></textarea>
+                            <label for="kronologi">kronologi</label>
+                            <textarea class="form-control" id="kronologi" name="keterangan" style="height: 100px;" placeholder="Jelaskan mengenai hal yang dilaporkan"></textarea>
                         </div>
                         <div class="form-group">
-                            <label for="lokasi">Lokasi Kejadian</label>
+                            <label for="latlang">Lokasi</label>
+                            <button type="button" class="btn btn-sm mx-3 shadow btn-<?= userColor() ?>" data-toggle="modal" data-target="#modalSelectLocation">
+                                <i class="fa fa-map-marker-alt px-3"></i>
+                            </button>
+                            <input type="text" class="form-control " id="latlang" placeholder="kejadian apa yang terjadi" readonly required name="latlang">
+                        </div>
+                        <div class="form-group">
+                            <label for="lokasi">Detail Lokasi Kejadian</label>
                             <textarea class="form-control" id="lokasi" name="lokasi" style="height: 100px;" placeholder="Tuliskan detail lokasi kejadian"></textarea>
                         </div>
                         <div class="form-group">
@@ -116,6 +122,31 @@
                         <button type="submit" class="btn btn-<?= userColor() ?> shadow"><i class="fa fa-save"></i> SIMPAN</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- modalSelectLocation -->
+<div class="modal fade" id="modalSelectLocation" data-backdrop="static" tabindex="-1" role="dialog" aria-labelledby="modalSelectLocationLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content rounded-0">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalSelectLocationLabel">Pilih Lokasi Kejadian</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close" onclick="clearMarker()">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body p-0 m-0">
+                <div class="p-3">
+                    <input type="text" class="form-control" id="latlang" placeholder="kejadian apa yang terjadi" readonly name="latlang">
+                </div>
+                <div id="map" class="map" style="width:100%; height: 450px;"></div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary shadow" data-dismiss="modal" onclick="clearMarker()">Batal</button>
+                <button type="button" class="btn btn-<?= userColor() ?> shadow" data-dismiss="modal" onclick="setLatLang()">Pilih</button>
             </div>
         </div>
     </div>
